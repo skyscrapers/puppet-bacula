@@ -1,0 +1,35 @@
+# PUPPETIZED
+
+#
+# Default  Bacula File Daemon Configuration file
+#
+#  For Bacula release 5.0.3 (04 August 2010) -- ubuntu 8.04
+#
+# There is not much to change here except perhaps the
+# File daemon Name to
+#
+
+#
+# List Directors who are permitted to contact this File daemon
+#
+Director {
+  Name = <%= @dir_server %>
+  Password = "<%= @dir_password %>"
+}
+
+#
+# "Global" File daemon configuration specifications
+#
+FileDaemon {                          # this is me
+  Name = <%= scope.lookupvar('fqdn') %>
+  FDport =  <%= @fd_port %>     # where we listen for the director
+  WorkingDirectory = /usr/local/bacula/var/bacula/working
+  Pid Directory = /var/run
+  Maximum Concurrent Jobs = 20
+}
+
+# Send all messages except skipped files back to Director
+Messages {
+  Name = Standard
+  director = <%= @dir_server %> = all, !skipped, !restored
+}

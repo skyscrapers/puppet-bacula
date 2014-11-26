@@ -1,0 +1,12 @@
+# PUPPETIZED
+
+Device {
+  Name = <%= scope.lookupvar('realfqdn') %>
+  Media Type = <%= scope.lookupvar('realfqdn') %>
+  Archive Device = /var/backups/bacula/<%= scope.lookupvar('realfqdn') %>
+  LabelMedia = yes;
+  Random Access = Yes;
+  AutomaticMount = yes;
+  RemovableMedia = no;
+  AlwaysOpen = no;
+}
