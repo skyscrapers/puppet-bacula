@@ -66,7 +66,7 @@ class bacula::config {
   }
 
   @@file {
-    "/usr/local/bacula/etc/template.dir.d/$::{realfqdn}.conf":
+    "/usr/local/bacula/etc/template.dir.d/$::realfqdn.conf":
       ensure => file,
       content => template ('bacula/usr/local/bacula/etc/conf.dir.d/bacula_client_dir_template.conf.erb'),
       owner => root,
@@ -76,7 +76,7 @@ class bacula::config {
   }
 
   @@file {
-    "/usr/local/bacula/etc/template.sd.d/$::{realfqdn}.conf":
+    "/usr/local/bacula/etc/template.sd.d/$::realfqdn.conf":
     ensure => file,
     content => template ('bacula/usr/local/bacula/etc/conf.sd.d/bacula_client_sd_template.conf.erb'),
     owner => root,
@@ -86,7 +86,7 @@ class bacula::config {
   }
 
   @@file {
-    "/var/backups/bacula/$::{realfqdn}":
+    "/var/backups/bacula/$::realfqdn":
     ensure => directory,
     mode => '0755',
     owner => root,
