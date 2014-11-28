@@ -56,13 +56,20 @@ class bacula(
   $dir_password         = undef,
   $sd_password          = undef,
   $fd_port              = $bacula::params::fd_port,
-  $sd_port              = $bacula::params::sd_port
+  $sd_port              = $bacula::params::sd_port,
+  $manage_repo          = false
 ) inherits bacula::params {
 
-  include bacula::repo
+  if( $manage_repo == true ) {
+    include bacula::repo
+  }
   include bacula::install
   include bacula::config
   include bacula::service
 
-  Class['bacula::repo'] -> Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
+  if( $manage_repo == true ){
+    Class['bacula::repo'] -> Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
+  } else {
+    Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
+  }
 }
