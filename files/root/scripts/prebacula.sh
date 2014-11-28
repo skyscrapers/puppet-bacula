@@ -4,6 +4,8 @@
 
 TOTALERRORS=0
 
+# TODO: Move files to a better location and review permissions.
+
 if [ -x /root/scripts/mysqlbackup.sh ]; then
 	/root/scripts/mysqlbackup.sh
 	if [ $? -ne 0 ]; then
