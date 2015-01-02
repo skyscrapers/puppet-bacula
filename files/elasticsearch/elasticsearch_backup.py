@@ -30,20 +30,20 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"hn:a:",["name=","age="])
     except getopt.GetoptError:
-        print 'elasticsearch_backup.py -n <name>'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age>'
         sys.exit(2)
 
     if opts:
         for opt, arg in opts:
             if opt == '-h':
-                print 'elasticsearch_backup.py -n <name>'
+                print 'elasticsearch_backup.py -n <name> -a <max backup age>'
                 sys.exit()
             elif opt in ("-n", "--name"):
                 name = arg
             elif opt in ("-a", "--age"):
                 age = int(arg)
     else:
-        print 'elasticsearch_backup.py -n <name>'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age>'
         sys.exit(2)
 
     delete_old_snapshots(name,age)
