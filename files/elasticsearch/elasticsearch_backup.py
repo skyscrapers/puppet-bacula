@@ -61,10 +61,10 @@ def delete_old_snapshots(name, age):
             try:
                 r = requests.delete("http://localhost:9200/_snapshot/" + name + "/" + snapshot['snapshot'])
             except requests.Timeout, e:
-                print 'Something went wronng whene requesting snapshots'
+                print 'Time-out on delete of snapshot'
                 exit(2)
             if r.status_code != 200:
-                print 'HTTP response is not 200'
+                print 'HTTP response is not 200 when trying to delete a snapshot'
                 try:
                     response = r.json()
                     print response['error']
@@ -76,10 +76,10 @@ def get_snapshots(name):
     try:
         r = requests.get("http://localhost:9200/_snapshot/" + name + "/_all")
     except requests.Timeout, e:
-        print 'Something went wronng whene requesting snapshots'
+        print 'Time-out when querying for snapshots'
         exit(2)
     if r.status_code != 200:
-        print 'HTTP response is not 200'
+        print 'HTTP response is not 200 when requesting snapshots'
         try:
             response = r.json()
             print response['error']
@@ -95,11 +95,11 @@ def create_snapshot(name):
     try:
         r = requests.put("http://localhost:9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=300)
     except requests.Timeout, e:
-        print 'Took langer than 5 minutes to get response from HTTP requests'
+        print 'Took longer than 5 minutes to get a response when trying to add a snapshot'
         exit(2)
 
     if r.status_code != 200:
-        print 'HTTP response is not 200'
+        print 'HTTP response is not 200 when adding a snapshot'
         try:
             response = r.json()
             print response['error']
