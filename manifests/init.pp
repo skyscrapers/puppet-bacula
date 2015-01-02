@@ -51,25 +51,26 @@
 #     }
 #
 class bacula(
-  $bu_server            = undef,
-  $dir_server           = undef,
-  $dir_password         = undef,
-  $sd_password          = undef,
-  $fd_port              = $bacula::params::fd_port,
-  $sd_port              = $bacula::params::sd_port,
-  $manage_repo          = false
-) inherits bacula::params {
+  $bu_server                  = undef,
+  $dir_server                 = undef,
+  $dir_password               = undef,
+  $sd_password                = undef,
+  $fd_port                    = $bacula::params::fd_port,
+  $sd_port                    = $bacula::params::sd_port,
+  $manage_repo                = false,
+  $elasticsearch_script_path  = $bacula::params::elasticsearch_script_path
+  ) inherits bacula::params {
 
-  if( $manage_repo == true ) {
-    include bacula::repo
-  }
-  include bacula::install
-  include bacula::config
-  include bacula::service
+    if( $manage_repo == true ) {
+      include bacula::repo
+    }
+    include bacula::install
+    include bacula::config
+    include bacula::service
 
-  if( $manage_repo == true ){
-    Class['bacula::repo'] -> Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
-  } else {
-    Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
-  }
-}
+    if( $manage_repo == true ){
+      Class['bacula::repo'] -> Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
+      } else {
+        Class['bacula::install'] -> Class['bacula::config'] -> Class['bacula::service']
+      }
+    }

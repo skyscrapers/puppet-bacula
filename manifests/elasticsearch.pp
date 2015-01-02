@@ -43,7 +43,7 @@
 class bacula::elasticsearch(
   $name        = undef,
   $location    = undef,
-  $script_path = undef,
+  $script_path = $bacula::params::elasticsearch_script_path,
 ) {
 
   exec { 'Add snapshot to elasticsearch':

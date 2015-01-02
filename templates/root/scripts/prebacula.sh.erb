@@ -7,9 +7,9 @@ TOTALERRORS=0
 # TODO: Move files to a better location and review permissions.
 
 if [ -x /root/scripts/mysqlbackup.sh ]; then
-	/root/scripts/mysqlbackup.sh
-	if [ $? -ne 0 ]; then
-  	TOTALERRORS=$(expr $TOTALERRORS + 1)
+  /root/scripts/mysqlbackup.sh
+  if [ $? -ne 0 ]; then
+    TOTALERRORS=$(expr $TOTALERRORS + 1)
   fi
 fi
 
@@ -20,18 +20,18 @@ if [ -x /root/scripts/rdsbackup.sh ]; then
   fi
 fi
 
-if [ -x /root/scripts/elasticsearchbackup.sh ]; then
-  /root/scripts/elasticsearchbackup.sh
+if [ -x <%= @elasticsearch_script_path %>/elasticsearch_backup.py ]; then
+  <%= @elasticsearch_script_path %>/elasticsearch_backup.py
   if [ $? -ne 0 ]; then
     TOTALERRORS=$(expr $TOTALERRORS + 1)
   fi
 fi
 
 if [ -x /root/scripts/mongodbbackup.sh ]; then
-	/root/scripts/mongodbbackup.sh
-	if [ $? -ne 0 ]; then
-		TOTALERRORS=$(expr $TOTALERRORS + 1)
-	fi
+  /root/scripts/mongodbbackup.sh
+  if [ $? -ne 0 ]; then
+    TOTALERRORS=$(expr $TOTALERRORS + 1)
+  fi
 fi
 
 if [ $TOTALERRORS == 0 ]; then
