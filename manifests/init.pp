@@ -51,14 +51,15 @@
 #     }
 #
 class bacula(
-  $bu_server                  = undef,
-  $dir_server                 = undef,
-  $dir_password               = undef,
-  $sd_password                = undef,
-  $fd_port                    = $bacula::params::fd_port,
-  $sd_port                    = $bacula::params::sd_port,
-  $manage_repo                = false,
-  $elasticsearch_script_path  = $bacula::params::elasticsearch_script_path
+  $bu_server                    = undef,
+  $dir_server                   = undef,
+  $dir_password                 = undef,
+  $sd_password                  = undef,
+  $fd_port                      = $bacula::params::fd_port,
+  $sd_port                      = $bacula::params::sd_port,
+  $manage_repo                  = false,
+  $elasticsearch_script_path    = $bacula::params::elasticsearch_script_path,
+  $elasticsearch_snapshot_name  = undef
   ) inherits bacula::params {
 
   if( $manage_repo == true ) {

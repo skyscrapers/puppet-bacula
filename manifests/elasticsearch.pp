@@ -44,7 +44,7 @@ class bacula::elasticsearch(
   $name        = undef,
   $location    = undef,
   $script_path = $bacula::params::elasticsearch_script_path,
-) {
+  ) inherits bacula::params {
 
   exec { 'Add snapshot to elasticsearch':
     command   => "curl -XPUT \'http://localhost:9200/_snapshot/${name}\' -d \'{\"type\": \"fs\",\"settings\": {\"location\": \"${location}\",\"compress\": true}}\'",
