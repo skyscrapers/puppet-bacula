@@ -23,4 +23,6 @@
 class bacula::params {
   $fd_port = 9102
   $sd_port = 9103
+
+  $elasticsearch_script_path = '/usr/local/bin'
 }

@@ -30,6 +30,13 @@ class bacula::config {
       require => Class['bacula::install'],
       notify  => Class['bacula::service'];
 
+    '/root/scripts/prebacula.sh':
+      ensure  => file,
+      content => template('bacula/root/scripts/prebacula.sh.erb'),
+      owner   => root,
+      group   => root,
+      mode    => '0700';
+
     '/root/bacula':
       ensure => directory,
       mode   => '0755',
@@ -42,13 +49,6 @@ class bacula::config {
       owner => root,
       group => root,
       mode => '0755';
-
-    '/root/scripts/prebacula.sh':
-      ensure => file,
-      source => 'puppet:///modules/bacula/root/scripts/prebacula.sh',
-      owner  => root,
-      group  => root,
-      mode   => '0700';
 
     '/root/scripts/removeBackupTmpFolders.sh':
       ensure => file,
@@ -77,20 +77,20 @@ class bacula::config {
 
   @@file {
     "/usr/local/bacula/etc/template.sd.d/$::realfqdn.conf":
-    ensure => file,
-    content => template ('bacula/usr/local/bacula/etc/conf.sd.d/bacula_client_sd_template.conf.erb'),
-    owner => root,
-    group => root,
-    tag => 'baculaconfig',
-    mode => '0644';
+      ensure => file,
+      content => template ('bacula/usr/local/bacula/etc/conf.sd.d/bacula_client_sd_template.conf.erb'),
+      owner => root,
+      group => root,
+      tag => 'baculaconfig',
+      mode => '0644';
   }
 
   @@file {
     "/var/backups/bacula/$::realfqdn":
-    ensure => directory,
-    mode => '0755',
-    owner => root,
-    group => root,
-    tag => 'baculaconfig';
+      ensure => directory,
+      mode => '0755',
+      owner => root,
+      group => root,
+      tag => 'baculaconfig';
   }
 }
