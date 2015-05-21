@@ -35,9 +35,16 @@ class bacula::config {
       content => template('bacula/root/scripts/prebacula.sh.erb'),
       owner   => root,
       group   => root,
-      mode    => '0700';
+      mode    => '0700',
+      require => File['/etc/scripts'];
 
     '/root/bacula':
+      ensure => directory,
+      mode   => '0755',
+      owner  => root,
+      group  => root;
+
+    '/root/scripts':
       ensure => directory,
       mode   => '0755',
       owner  => root,
@@ -48,14 +55,16 @@ class bacula::config {
       source => 'puppet:///modules/bacula/root/scripts/postbacula.sh',
       owner => root,
       group => root,
-      mode => '0755';
+      mode => '0755',
+      require => File['/etc/scripts'];
 
     '/root/scripts/removeBackupTmpFolders.sh':
       ensure => file,
       source => 'puppet:///modules/bacula/root/scripts/removeBackupTmpFolders.sh',
       owner  => root,
       group  => root,
-      mode   => '0755';
+      mode   => '0755',
+      require => File['/etc/scripts'];
 
     '/etc/cron.d/backupcleanup':
       ensure => file,
