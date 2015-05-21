@@ -36,7 +36,7 @@ class bacula::config {
       owner   => root,
       group   => root,
       mode    => '0700',
-      require => File['/etc/scripts'];
+      require => File['/root/scripts'];
 
     '/root/bacula':
       ensure => directory,
@@ -56,7 +56,7 @@ class bacula::config {
       owner => root,
       group => root,
       mode => '0755',
-      require => File['/etc/scripts'];
+      require => File['/root/scripts'];
 
     '/root/scripts/removeBackupTmpFolders.sh':
       ensure => file,
@@ -64,7 +64,7 @@ class bacula::config {
       owner  => root,
       group  => root,
       mode   => '0755',
-      require => File['/etc/scripts'];
+      require => File['/root/scripts'];
 
     '/etc/cron.d/backupcleanup':
       ensure => file,
