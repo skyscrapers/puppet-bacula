@@ -7,7 +7,7 @@ TOTALERRORS=0
 # TODO: Move files to a better location and review permissions.
 
 if [ -x /usr/local/sbin/mysqlbackup.sh ]; then
-  /root/scripts/mysqlbackup.sh
+  /usr/local/sbin/mysqlbackup.sh
   if [ $? -ne 0 ]; then
     TOTALERRORS=$(expr $TOTALERRORS + 1)
   fi
