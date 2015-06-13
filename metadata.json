@@ -1,0 +1,25 @@
+{
+  "name": "puppet-bacula",
+  "version": "1.0.0",
+  "author": "Skyscrapers",
+  "summary": "Puppet module for Bacula",
+  "license": "GPL-3.0",
+  "source": "git@github.com:skyscrapers/puppet-bacula.git",
+  "project_page": "https://github.com/skyscrapers/puppet-bacula",
+  "issues_url": "https://github.com/skyscrapers/puppet-bacula/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs/apt"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "10.04",
+        "12.04",
+        "14.04"
+      ]
+    }
+  ]
+}
