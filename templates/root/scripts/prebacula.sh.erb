@@ -41,6 +41,13 @@ if [ -x /root/scripts/mongodbbackup.sh ]; then
   fi
 fi
 
+if [ -x /usr/local/sbin/neo4jbackup.sh ]; then
+  /usr/local/sbin/neo4jbackup.sh
+  if [ $? -ne 0 ]; then
+    TOTALERRORS=$(expr $TOTALERRORS + 1)
+  fi
+fi
+
 if [ $TOTALERRORS == 0 ]; then
   exit 0
 else
