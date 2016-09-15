@@ -25,7 +25,8 @@ class bacula::install {
 
   package {
     $packagelist:
-    ensure => latest;
+      ensure => latest,
+      require => [ Apt::Source['skyscrapers-common'] ];
   }
 
   if (($::lsbdistrelease == '12.04') or ($::lsbdistrelease == '14.04')) {
