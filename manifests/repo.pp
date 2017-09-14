@@ -29,7 +29,7 @@ class bacula::repo {
       location    => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/ubuntu/',
       release     => 'lucid-skyscrapers',
       repos       => 'main',
-      key         => '1BC1B9EF',
+      key         => '5D14BB9A4D883FC38BF3140C096343CA613ECD57',
       key_source  => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/gpg.key',
       include_src => false,
     }
@@ -38,7 +38,7 @@ class bacula::repo {
       location    => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/ubuntu/',
       release     => 'precise-skyscrapers',
       repos       => 'main',
-      key         => '1BC1B9EF',
+      key         => '5D14BB9A4D883FC38BF3140C096343CA613ECD57',
       key_source  => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/gpg.key',
       include_src => false,
     }
@@ -47,7 +47,7 @@ class bacula::repo {
       location    => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/ubuntu/',
       release     => 'trusty-skyscrapers',
       repos       => 'main',
-      key         => '1BC1B9EF',
+      key         => '5D14BB9A4D883FC38BF3140C096343CA613ECD57',
       key_source  => 'http://skypackages.s3-website-eu-west-1.amazonaws.com/gpg.key',
       include_src => false,
     }
