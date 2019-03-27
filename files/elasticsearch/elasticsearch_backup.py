@@ -25,20 +25,23 @@ import getopt
 import datetime
 from time import mktime
 from datetime import timedelta
+from requests.auth import HTTPBasicAuth
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"hSn:a:H:t:",["name=","age=","host=","timeout=","ssl"])
+        opts, args = getopt.getopt(argv,"hSn:a:H:t:u:p:",["name=","age=","host=","timeout=","ssl","esuser=","espass="])
     except getopt.GetoptError:
-        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl] [--esuser <username>] [--espass <password>]'
         sys.exit(2)
 
     proto = "http"
+    es_user = None
+    es_pass = None
 
     if opts:
         for opt, arg in opts:
             if opt == '-h':
-                print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
+                print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl] [--esuser <username>] [--espass <password>]'
                 sys.exit()
             elif opt in ("-n", "--name"):
                 name = arg
@@ -50,24 +53,31 @@ def main(argv):
                 proto = "https"
             elif opt in ("-t", "--timeout"):
                 timeout = int(arg)
+            elif opt in ("-u", "--esuser"):
+                es_user = arg
+            elif opt in ("-p", "--espass"):
+                es_pass = arg
     else:
-        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl] [--esuser <username>] [--espass <password>]'
         sys.exit(2)
 
-    delete_old_snapshots(host, name, age, proto)
-    create_snapshot(host, name, timeout, proto)
+    delete_old_snapshots(host, name, age, proto, es_user, es_pass)
+    create_snapshot(host, name, timeout, proto, es_user, es_pass)
 
 
-def delete_old_snapshots(host, name, age, proto):
+def delete_old_snapshots(host, name, age, proto, es_user, es_pass):
     keep_backup_date = datetime.datetime.now() - timedelta(days=age)
     keep_miliseconds = 1000*mktime(keep_backup_date.timetuple())
 
-    snapshots = get_snapshots(host, name, proto)
+    snapshots = get_snapshots(host, name, proto, es_user, es_pass)
 
     for snapshot in snapshots['snapshots']:
         if snapshot['end_time_in_millis'] < keep_miliseconds:
             try:
-                r = requests.delete(proto + "://" + host + ":9200/_snapshot/" + name + "/" + snapshot['snapshot'])
+                if es_user is None or es_pass is None:
+                    r = requests.delete(proto + "://" + host + ":9200/_snapshot/" + name + "/" + snapshot['snapshot'])
+                else:
+                    r = requests.delete(proto + "://" + host + ":9200/_snapshot/" + name + "/" + snapshot['snapshot'], auth=HTTPBasicAuth(es_user, es_pass))
             except requests.Timeout, e:
                 print 'Time-out on delete of snapshot'
                 exit(2)
@@ -80,9 +90,12 @@ def delete_old_snapshots(host, name, age, proto):
                     print 'No JSON response'
                 exit(2)
 
-def get_snapshots(host, name, proto):
+def get_snapshots(host, name, proto, es_user, es_pass):
     try:
-        r = requests.get(proto + "://" + host + ":9200/_snapshot/" + name + "/_all")
+        if es_user is None or es_pass is None:
+            r = requests.get(proto + "://" + host + ":9200/_snapshot/" + name + "/_all")
+        else:
+            r = requests.get(proto + "://" + host + ":9200/_snapshot/" + name + "/_all", auth=HTTPBasicAuth(es_user, es_pass))
     except requests.Timeout, e:
         print 'Time-out when querying for snapshots'
         exit(2)
@@ -98,10 +111,13 @@ def get_snapshots(host, name, proto):
     response = r.json()
     return response
 
-def create_snapshot(host, name, timeout, proto):
+def create_snapshot(host, name, timeout, proto, es_user, es_pass):
     snapshot_id = time.strftime("%y_%m_%d_%H_%M_%S")
     try:
-        r = requests.put(proto + "://" + host + ":9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=timeout)
+        if es_user is None or es_pass is None:
+            r = requests.put(proto + "://" + host + ":9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=timeout)
+        else:
+            r = requests.put(proto + "://" + host + ":9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=timeout, auth=HTTPBasicAuth(es_user, es_pass))
     except requests.Timeout, e:
         print 'Took longer than '+ timeout +' seconds to get a response when trying to add a snapshot'
         exit(2)
