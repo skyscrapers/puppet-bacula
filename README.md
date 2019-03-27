@@ -1,3 +1,5 @@
+**DERECATION NOTICE**: This repo is no longer maintained
+
 puppet-bacula
 =============
 
