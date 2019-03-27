@@ -28,38 +28,46 @@ from datetime import timedelta
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"hn:a:",["name=","age="])
+        opts, args = getopt.getopt(argv,"hSn:a:H:t:",["name=","age=","host=","timeout=","ssl"])
     except getopt.GetoptError:
-        print 'elasticsearch_backup.py -n <name> -a <max backup age>'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
         sys.exit(2)
+
+    proto = "http"
 
     if opts:
         for opt, arg in opts:
             if opt == '-h':
-                print 'elasticsearch_backup.py -n <name> -a <max backup age>'
+                print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
                 sys.exit()
             elif opt in ("-n", "--name"):
                 name = arg
             elif opt in ("-a", "--age"):
                 age = int(arg)
+            elif opt in ("-H", "--host"):
+                host = arg
+            elif opt in ("-S", "--ssl"):
+                proto = "https"
+            elif opt in ("-t", "--timeout"):
+                timeout = int(arg)
     else:
-        print 'elasticsearch_backup.py -n <name> -a <max backup age>'
+        print 'elasticsearch_backup.py -n <name> -a <max backup age> -H <elastic-host> -t timeout [--ssl]'
         sys.exit(2)
 
-    delete_old_snapshots(name,age)
-    create_snapshot(name)
+    delete_old_snapshots(host, name, age, proto)
+    create_snapshot(host, name, timeout, proto)
 
 
-def delete_old_snapshots(name, age):
+def delete_old_snapshots(host, name, age, proto):
     keep_backup_date = datetime.datetime.now() - timedelta(days=age)
     keep_miliseconds = 1000*mktime(keep_backup_date.timetuple())
 
-    snapshots = get_snapshots(name)
+    snapshots = get_snapshots(host, name, proto)
 
     for snapshot in snapshots['snapshots']:
         if snapshot['end_time_in_millis'] < keep_miliseconds:
             try:
-                r = requests.delete("http://localhost:9200/_snapshot/" + name + "/" + snapshot['snapshot'])
+                r = requests.delete(proto + "://" + host + ":9200/_snapshot/" + name + "/" + snapshot['snapshot'])
             except requests.Timeout, e:
                 print 'Time-out on delete of snapshot'
                 exit(2)
@@ -72,9 +80,9 @@ def delete_old_snapshots(name, age):
                     print 'No JSON response'
                 exit(2)
 
-def get_snapshots(name):
+def get_snapshots(host, name, proto):
     try:
-        r = requests.get("http://localhost:9200/_snapshot/" + name + "/_all")
+        r = requests.get(proto + "://" + host + ":9200/_snapshot/" + name + "/_all")
     except requests.Timeout, e:
         print 'Time-out when querying for snapshots'
         exit(2)
@@ -90,12 +98,12 @@ def get_snapshots(name):
     response = r.json()
     return response
 
-def create_snapshot(name):
+def create_snapshot(host, name, timeout, proto):
     snapshot_id = time.strftime("%y_%m_%d_%H_%M_%S")
     try:
-        r = requests.put("http://localhost:9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=300)
+        r = requests.put(proto + "://" + host + ":9200/_snapshot/" + name +"/" + snapshot_id + "?wait_for_completion=true", timeout=timeout)
     except requests.Timeout, e:
-        print 'Took longer than 5 minutes to get a response when trying to add a snapshot'
+        print 'Took longer than '+ timeout +' seconds to get a response when trying to add a snapshot'
         exit(2)
 
     if r.status_code != 200:
